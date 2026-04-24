@@ -23,16 +23,33 @@ export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
   };
 
   return (
-    <div className="absolute right-3 bottom-[max(env(safe-area-inset-bottom),16px)] z-20 flex flex-col gap-3">
-      <ActionButton icon={<Heart className={`h-5 w-5 ${isLiked ? "fill-primary text-primary" : ""}`} />} label="Like" onClick={() => toggleLike(puzzle.id)} active={isLiked} />
-      <ActionButton icon={<Bookmark className={`h-5 w-5 ${isSaved ? "fill-primary text-primary" : ""}`} />} label="Save" onClick={() => toggleSave(puzzle.id)} active={isSaved} />
-      <ActionButton
-        icon={<Lightbulb className="h-5 w-5" />}
-        label={hintsUsed ? `${hintsUsed}` : "Hint"}
-        onClick={onHint}
-      />
-      <ActionButton icon={<Share2 className="h-5 w-5" />} label="Share" onClick={share} />
-      <ActionButton icon={<Flame className="h-5 w-5 text-primary" />} label={`${streak}`} onClick={() => {}} />
+    <div className="shrink-0 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),18px)]">
+      <div className="flex items-end justify-between max-w-md mx-auto">
+        <ActionButton
+          icon={<Heart className={`h-6 w-6 ${isLiked ? "fill-primary text-primary" : "text-primary"}`} strokeWidth={1.8} />}
+          label="128"
+          onClick={() => toggleLike(puzzle.id)}
+          active={isLiked}
+        />
+        <ActionButton
+          icon={<Bookmark className={`h-6 w-6 ${isSaved ? "fill-primary text-primary" : "text-foreground/85"}`} strokeWidth={1.8} />}
+          label="56"
+          onClick={() => toggleSave(puzzle.id)}
+          active={isSaved}
+        />
+        <HintButton onClick={onHint} count={hintsUsed} />
+        <ActionButton
+          icon={<Share2 className="h-6 w-6 text-foreground/85" strokeWidth={1.8} />}
+          label="Share"
+          onClick={share}
+        />
+        <ActionButton
+          icon={<Flame className="h-6 w-6 text-primary" strokeWidth={1.8} />}
+          label={`${streak}`}
+          sublabel="Streak"
+          onClick={() => {}}
+        />
+      </div>
     </div>
   );
 }
@@ -40,28 +57,49 @@ export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
 function ActionButton({
   icon,
   label,
+  sublabel,
   onClick,
   active,
 }: {
   icon: React.ReactNode;
   label: string;
+  sublabel?: string;
   onClick: () => void;
   active?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 select-none active:scale-95 transition-transform`}
+      className="flex flex-col items-center gap-1 select-none active:scale-95 transition-transform"
       aria-label={label}
     >
       <span
-        className={`h-11 w-11 rounded-2xl border flex items-center justify-center backdrop-blur-md ${
-          active ? "border-primary/70 bg-primary/10" : "border-border bg-card/80"
+        className={`h-12 w-12 rounded-full border flex items-center justify-center backdrop-blur-md ${
+          active ? "border-primary/70 bg-primary/10" : "border-border bg-card/60"
         }`}
       >
         {icon}
       </span>
-      <span className="text-[10px] font-semibold text-muted-foreground">{label}</span>
+      <span className="text-[11px] font-semibold text-foreground/85 leading-tight">{label}</span>
+      {sublabel && <span className="text-[10px] font-medium text-muted-foreground leading-none">{sublabel}</span>}
+    </button>
+  );
+}
+
+function HintButton({ onClick, count }: { onClick: () => void; count: number }) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-1 select-none active:scale-95 transition-transform relative"
+      aria-label="Hint"
+    >
+      <span className="relative h-14 w-14 rounded-full bg-primary flex items-center justify-center glow-primary">
+        <Lightbulb className="h-7 w-7 text-primary-foreground" strokeWidth={2.2} />
+        <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-card border border-border text-[10px] font-bold text-foreground flex items-center justify-center">
+          {3 - Math.min(count, 3)}
+        </span>
+      </span>
+      <span className="text-[11px] font-bold text-primary text-glow leading-tight">Hint</span>
     </button>
   );
 }
