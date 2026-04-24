@@ -1,5 +1,6 @@
 import { Chess, Square } from "chess.js";
 import { Chessboard } from "react-chessboard";
+import { TouchBackend } from "react-dnd-touch-backend";
 import { useEffect, useRef, useState } from "react";
 import type { Puzzle } from "@/data/puzzles";
 
@@ -11,6 +12,12 @@ type Props = {
   onWrong: () => void;
   onAttempt?: (correct: boolean) => void;
   hintRequested?: number; // increment to trigger hint
+};
+
+const dragBackendOptions = {
+  enableMouseEvents: true,
+  enableTouchEvents: true,
+  touchSlop: 0,
 };
 
 export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequested }: Props) {
@@ -161,12 +168,16 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     status === "wrong" ? "animate-shake" : status === "solved" ? "animate-pulse-glow" : "";
 
   return (
-    <div className={`w-full ${boardClass} rounded-2xl overflow-hidden`}>
+    <div className={`chess-drag-surface w-full ${boardClass} rounded-2xl overflow-hidden`}>
       <Chessboard
         id={`puzzle-${puzzle.id}`}
         position={position}
         boardOrientation={puzzle.sideToMove === "w" ? "white" : "black"}
         animationDuration={220}
+        customDndBackend={TouchBackend}
+        customDndBackendOptions={dragBackendOptions}
+        snapToCursor
+        allowDragOutsideBoard
         arePiecesDraggable={status !== "solved" && status !== "replying"}
         showBoardNotation={false}
         customLightSquareStyle={{ backgroundColor: "hsl(var(--board-light))" }}
