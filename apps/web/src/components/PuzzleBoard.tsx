@@ -28,7 +28,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   const [hintSquare, setHintSquare] = useState<Square | null>(null);
   const [solutionIndex, setSolutionIndex] = useState(0);
   const replyTimer = useRef<number | null>(null);
-  const { playMove, playIllegal, playVictory } = useChessSounds();
+  const { playMove, playIllegal, playVictory, playIncorrect } = useChessSounds();
 
   // Reset whenever puzzle changes
   useEffect(() => {
@@ -125,6 +125,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
 
     // Wrong but legal — flash, then revert
     setStatus("wrong");
+    playIncorrect();
     setPosition(trial.fen());
     setSelected(null);
     onWrong();

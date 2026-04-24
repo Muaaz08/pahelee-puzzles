@@ -19,5 +19,11 @@ export function useChessSounds() {
     audio.play().catch(() => {});
   };
 
-  return { playMove, playIllegal, playVictory };
+  const playIncorrect = () => {
+    const audio = new Audio('/sounds/incorrect-move.mp3');
+    audio.volume = 0.6;
+    audio.play().catch(() => {});
+  };
+
+  return { playMove, playIllegal, playVictory, playIncorrect };
 }
