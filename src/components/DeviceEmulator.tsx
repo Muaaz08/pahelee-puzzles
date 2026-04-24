@@ -9,10 +9,30 @@ export function DeviceEmulator({ children }: { children: React.ReactNode }) {
     }
   });
 
+  const [scale, setScale] = useState<number>(1);
+
   useEffect(() => {
     try {
       localStorage.setItem("emulateMobile", on ? "1" : "0");
     } catch {}
+  }, [on]);
+
+  useEffect(() => {
+    if (!on) return;
+    const update = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const frameW = 390;
+      const frameH = 844;
+      const padding = 48; // total padding around frame
+      const scaleByHeight = (vh - padding) / frameH;
+      const scaleByWidth = (vw - padding) / frameW;
+      const s = Math.min(1, scaleByHeight, scaleByWidth);
+      setScale(s > 0 ? s : 0.5);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, [on]);
 
   return (
@@ -29,7 +49,15 @@ export function DeviceEmulator({ children }: { children: React.ReactNode }) {
 
       {on ? (
         <div className="min-h-screen flex items-center justify-center p-6 bg-[rgba(0,0,0,0.35)]">
-          <div className="w-[390px] h-[844px] rounded-3xl overflow-hidden border border-border bg-background shadow-2xl">
+          <div
+            className="rounded-3xl overflow-hidden border border-border bg-background shadow-2xl"
+            style={{
+              width: 390,
+              height: 844,
+              transform: `scale(${scale})`,
+              transformOrigin: "top center",
+            }}
+          >
             {children}
           </div>
         </div>
