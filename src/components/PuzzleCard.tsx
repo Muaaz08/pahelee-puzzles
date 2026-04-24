@@ -141,13 +141,13 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
 
       {showSwipeHint && (
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="absolute left-1/2 -translate-x-1/2 bottom-[max(env(safe-area-inset-bottom),12px)] flex flex-col items-center text-muted-foreground text-xs pointer-events-none"
+          className="absolute left-1/2 -translate-x-1/2 bottom-1 flex flex-col items-center text-muted-foreground text-[11px] pointer-events-none"
         >
           <span>Swipe up for next puzzle</span>
-          <ChevronUp className="h-4 w-4 animate-bounce text-primary" />
+          <ChevronUp className="h-3.5 w-3.5 animate-bounce text-primary" />
         </motion.div>
       )}
     </section>
