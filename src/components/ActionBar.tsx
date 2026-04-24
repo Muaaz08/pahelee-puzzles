@@ -23,7 +23,7 @@ export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
   };
 
   return (
-    <div className="shrink-0 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),18px)]">
+    <div className="shrink-0 px-4 pt-2 pb-[max(env(safe-area-inset-bottom),14px)]">
       <div className="flex items-end justify-between max-w-md mx-auto">
         <ActionButton
           icon={<Heart className={`h-6 w-6 ${isLiked ? "fill-primary text-primary" : "text-primary"}`} strokeWidth={1.8} />}

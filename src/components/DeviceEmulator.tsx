@@ -54,9 +54,10 @@ export function DeviceEmulator({ children }: { children: React.ReactNode }) {
             style={{
               width: 390,
               height: 844,
+              "--app-height": "844px",
               transform: `scale(${scale})`,
               transformOrigin: "top center",
-            }}
+            } as React.CSSProperties}
           >
             {children}
           </div>

@@ -45,13 +45,10 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
   const sideLabel = puzzle.sideToMove === "w" ? "White" : "Black";
 
   return (
-    <section className="relative h-full w-full snap-start-always flex flex-col">
-      {/* Top spacer for header (logo + mode pills) */}
-      <div className="h-[140px] shrink-0" />
-
-      <div className="flex-1 flex flex-col justify-between px-4 min-h-0">
+    <section className="relative h-full w-full snap-start-always flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col gap-2 px-4 pt-[clamp(112px,16svh,140px)] min-h-0">
         {/* Top group: meta + title */}
-        <div className="space-y-2">
+        <div className="shrink-0 space-y-1.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
               #{puzzle.id}
@@ -66,40 +63,41 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
 
           <div className="text-center">
             <h2
-              className="text-3xl font-extrabold leading-tight"
+              className="text-[clamp(1.55rem,6.5vw,2rem)] font-extrabold leading-tight"
               style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
             >
               <span className="text-primary text-glow">{sideLabel}</span>{" "}
               <span className="text-foreground">to move</span>
             </h2>
-            <p className="text-sm text-muted-foreground mt-0.5">Find the best move</p>
+            <p className="text-xs text-muted-foreground mt-0.5 sm:text-sm">Find the best move</p>
           </div>
         </div>
 
         {/* Middle: board — grows to fill available space */}
-        <div className="flex-1 flex items-center justify-center min-h-0">
+        <div className="flex-1 flex items-center justify-center min-h-0 py-1">
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-md mx-auto flex flex-col items-center justify-center h-full"
+            className="w-full h-full max-w-md mx-auto flex items-center justify-center"
           >
-            <div className="w-full h-full flex items-center justify-center">
-              <div className="w-full max-w-md">
-                <PuzzleBoard
-                  puzzle={puzzle}
-                  onSolved={handleSolved}
-                  onWrong={handleWrong}
-                  onAttempt={registerAttempt}
-                  hintRequested={hintRequested}
-                />
-              </div>
+            <div
+              className="w-full max-h-full aspect-square"
+              style={{ maxWidth: "min(28rem, calc(var(--app-height, 100svh) - 320px))" }}
+            >
+              <PuzzleBoard
+                puzzle={puzzle}
+                onSolved={handleSolved}
+                onWrong={handleWrong}
+                onAttempt={registerAttempt}
+                hintRequested={hintRequested}
+              />
             </div>
           </motion.div>
         </div>
 
         {/* Bottom group: status + tip */}
-        <div className="space-y-2">
+        <div className="shrink-0 space-y-2">
           <div className="h-5 flex items-center justify-center">
             <AnimatePresence mode="wait">
               {solved && (
@@ -127,9 +125,9 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
             </AnimatePresence>
           </div>
 
-          <div className="mx-auto w-full max-w-md rounded-2xl border border-border bg-card/70 px-4 py-3 flex items-start gap-3">
-            <Lightbulb className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-            <p className="text-sm text-foreground/85 leading-snug">
+          <div className="mx-auto w-full max-w-md rounded-xl border border-border bg-card/70 px-3 py-2 flex items-start gap-2.5">
+            <Lightbulb className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <p className="text-xs text-foreground/85 leading-snug sm:text-sm">
               Think sharp, play smart.
               <br />
               Every puzzle, a stronger you.
@@ -137,6 +135,18 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
           </div>
         </div>
       </div>
+
+      {showSwipeHint && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="shrink-0 flex flex-col items-center text-muted-foreground text-[11px] pointer-events-none pt-1"
+        >
+          <span>Swipe up for next puzzle</span>
+          <ChevronUp className="h-3.5 w-3.5 animate-bounce text-primary" />
+        </motion.div>
+      )}
 
       <ActionBar
         puzzle={puzzle}
@@ -146,18 +156,6 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
           setHintRequested((n) => n + 1);
         }}
       />
-
-      {showSwipeHint && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="absolute left-1/2 -translate-x-1/2 bottom-1 flex flex-col items-center text-muted-foreground text-[11px] pointer-events-none"
-        >
-          <span>Swipe up for next puzzle</span>
-          <ChevronUp className="h-3.5 w-3.5 animate-bounce text-primary" />
-        </motion.div>
-      )}
     </section>
   );
 }

@@ -56,13 +56,13 @@ export function PuzzleFeed() {
           key={item.key}
           data-index={i}
           ref={(el) => (sectionRefs.current[i] = el)}
-          className="h-full w-full snap-start-always"
+          className="h-[var(--app-height,100svh)] w-full snap-start-always"
         >
           <PuzzleCard
             puzzle={item.puzzle}
             isActive={i === activeIndex}
             onAdvance={() => advance(i)}
-            showSwipeHint={i === 0}
+            showSwipeHint
           />
         </div>
       ))}

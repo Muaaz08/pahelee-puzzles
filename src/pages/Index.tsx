@@ -11,7 +11,7 @@ const Index = () => {
   return (
     <AppProvider>
       <DeviceEmulator>
-        <main className="relative h-[100svh] w-full bg-background text-foreground overflow-hidden">
+        <main className="relative h-[var(--app-height,100svh)] w-full bg-background text-foreground overflow-hidden">
           <AppHeader onOpenSettings={() => setSettingsOpen(true)} />
           <PuzzleFeed />
           <SettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
