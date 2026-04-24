@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp, MoreHorizontal } from "lucide-react";
 import { PuzzleBoard } from "./PuzzleBoard";
@@ -45,10 +46,17 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
   const sideLabel = puzzle.sideToMove === "w" ? "White" : "Black";
 
   return (
-    <section className="relative h-full w-full snap-start-always flex flex-col overflow-hidden">
-      <div className="flex-1 flex flex-col gap-1.5 px-4 pt-[clamp(96px,14svh,132px)] sm:gap-2 sm:pt-[clamp(112px,16svh,140px)] min-h-0">
+    <section
+      className="relative h-full w-full snap-start-always flex flex-col overflow-hidden"
+      style={
+        {
+          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 330px))",
+        } as CSSProperties
+      }
+    >
+      <div className="flex-1 flex flex-col gap-1 px-4 pt-1 sm:gap-2 sm:pt-3 min-h-0">
         {/* Top group: meta + title */}
-        <div className="shrink-0 space-y-1 sm:space-y-1.5">
+        <div className="shrink-0 space-y-0.5 sm:space-y-1.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
               #{puzzle.id}
@@ -56,20 +64,20 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
             <span className={`text-xs font-extrabold tracking-wider ${diffColor[puzzle.difficulty]}`}>
               {puzzle.difficulty.toUpperCase()}
             </span>
-            <button className="h-10 w-10 flex items-center justify-center text-muted-foreground" aria-label="More">
+            <button className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center text-muted-foreground" aria-label="More">
               <MoreHorizontal className="h-5 w-5" />
             </button>
           </div>
 
           <div className="text-center">
             <h2
-              className="text-[clamp(1.35rem,5.8vw,2rem)] font-extrabold leading-tight"
+              className="text-[clamp(1.2rem,5.2vw,2rem)] font-extrabold leading-tight"
               style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
             >
               <span className="text-primary text-glow">{sideLabel}</span>{" "}
               <span className="text-foreground">to move</span>
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5 sm:text-sm">Find the best move</p>
+            <p className="text-[11px] text-muted-foreground sm:mt-0.5 sm:text-sm">Find the best move</p>
           </div>
         </div>
 
@@ -83,7 +91,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
           >
             <div
               className="w-full max-h-full aspect-square"
-              style={{ maxWidth: "min(28rem, calc(var(--app-height, 100svh) - 270px))" }}
+              style={{ maxWidth: "var(--board-max)" }}
             >
               <PuzzleBoard
                 puzzle={puzzle}
@@ -98,7 +106,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
 
         {/* Bottom group: status */}
         <div className="shrink-0">
-          <div className="h-5 flex items-center justify-center">
+          <div className="h-4 sm:h-5 flex items-center justify-center">
             <AnimatePresence mode="wait">
               {solved && (
                 <motion.span
@@ -106,7 +114,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-primary font-bold text-sm text-glow"
+                  className="text-primary font-bold text-xs sm:text-sm text-glow"
                 >
                   ✓ Brilliant! Next puzzle…
                 </motion.span>
@@ -117,7 +125,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-red-400 font-bold text-sm"
+                  className="text-red-400 font-bold text-xs sm:text-sm"
                 >
                   Not quite — try again
                 </motion.span>
@@ -132,10 +140,10 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="shrink-0 flex flex-col items-center text-muted-foreground text-[10px] sm:text-[11px] pointer-events-none pt-0.5"
+          className="shrink-0 flex flex-col items-center text-muted-foreground text-[9px] sm:text-[11px] pointer-events-none"
         >
           <span>Swipe up for next puzzle</span>
-          <ChevronUp className="h-3.5 w-3.5 animate-bounce text-primary" />
+          <ChevronUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-bounce text-primary" />
         </motion.div>
       )}
 

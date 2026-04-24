@@ -9,7 +9,7 @@ export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
   const timerLabel = timerActive ? `${mm}:${ss}` : `${timerSolved}✓`;
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-30 px-4 pt-[max(env(safe-area-inset-top),10px)] pb-2 sm:pt-[max(env(safe-area-inset-top),12px)] sm:pb-3 pointer-events-none">
+    <header className="relative z-30 shrink-0 px-4 pt-[max(env(safe-area-inset-top),8px)] pb-1.5 sm:pt-[max(env(safe-area-inset-top),12px)] sm:pb-3">
       <div className="flex items-center justify-between pointer-events-auto">
         <button className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center" aria-label="Profile">
           <Crown className="h-5 w-5 sm:h-6 sm:w-6 text-primary" strokeWidth={2.2} />

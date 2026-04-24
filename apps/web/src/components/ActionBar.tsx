@@ -23,7 +23,7 @@ export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
   };
 
   return (
-    <div className="shrink-0 px-4 pt-1.5 sm:pt-2 pb-[max(env(safe-area-inset-bottom),10px)] sm:pb-[max(env(safe-area-inset-bottom),14px)]">
+    <div className="shrink-0 px-4 pt-1 sm:pt-2 pb-[max(env(safe-area-inset-bottom),6px)] sm:pb-[max(env(safe-area-inset-bottom),14px)]">
       <div className="grid grid-cols-5 items-end justify-items-center gap-1 max-w-md mx-auto">
         <ActionButton
           icon={<Heart className={`h-6 w-6 ${isLiked ? "fill-primary text-primary" : "text-primary"}`} strokeWidth={1.8} />}
@@ -74,13 +74,13 @@ function ActionButton({
       aria-label={label}
     >
       <span
-        className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border flex items-center justify-center backdrop-blur-md ${
+        className={`h-9 w-9 sm:h-12 sm:w-12 rounded-full border flex items-center justify-center backdrop-blur-md ${
           active ? "border-primary/70 bg-primary/10" : "border-border bg-card/60"
         }`}
       >
         {icon}
       </span>
-      <span className="max-w-full truncate text-[10px] sm:text-[11px] font-semibold text-foreground/85 leading-tight">{label}</span>
+      <span className="max-w-full truncate text-[9px] sm:text-[11px] font-semibold text-foreground/85 leading-tight">{label}</span>
       {sublabel && <span className="max-w-full truncate text-[9px] sm:text-[10px] font-medium text-muted-foreground leading-none">{sublabel}</span>}
     </button>
   );
@@ -93,13 +93,13 @@ function HintButton({ onClick, count }: { onClick: () => void; count: number }) 
       className="flex min-w-0 flex-col items-center gap-0.5 sm:gap-1 select-none active:scale-95 transition-transform relative"
       aria-label="Hint"
     >
-      <span className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full bg-primary flex items-center justify-center glow-primary">
-        <Lightbulb className="h-6 w-6 sm:h-7 sm:w-7 text-primary-foreground" strokeWidth={2.2} />
+      <span className="relative h-11 w-11 sm:h-14 sm:w-14 rounded-full bg-primary flex items-center justify-center glow-primary">
+        <Lightbulb className="h-5 w-5 sm:h-7 sm:w-7 text-primary-foreground" strokeWidth={2.2} />
         <span className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-card border border-border text-[10px] font-bold text-foreground flex items-center justify-center">
           {3 - Math.min(count, 3)}
         </span>
       </span>
-      <span className="text-[10px] sm:text-[11px] font-bold text-primary text-glow leading-tight">Hint</span>
+      <span className="text-[9px] sm:text-[11px] font-bold text-primary text-glow leading-tight">Hint</span>
     </button>
   );
 }

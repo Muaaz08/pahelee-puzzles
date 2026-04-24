@@ -48,7 +48,7 @@ export function PuzzleFeed() {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full overflow-y-scroll scroll-snap-y no-scrollbar"
+      className="min-h-0 flex-1 w-full overflow-y-scroll scroll-snap-y no-scrollbar"
       style={{ overscrollBehavior: "contain" }}
     >
       {stream.map((item, i) => (
@@ -56,7 +56,7 @@ export function PuzzleFeed() {
           key={item.key}
           data-index={i}
           ref={(el) => (sectionRefs.current[i] = el)}
-          className="h-[var(--app-height,100svh)] w-full snap-start-always"
+          className="h-full w-full snap-start-always"
         >
           <PuzzleCard
             puzzle={item.puzzle}

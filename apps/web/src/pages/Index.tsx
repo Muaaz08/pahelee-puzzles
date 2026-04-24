@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppProvider } from "@/store/app-store";
 import { AppHeader } from "@/components/AppHeader";
 import { PuzzleFeed } from "@/components/PuzzleFeed";
@@ -7,8 +7,25 @@ import { DeviceEmulator } from "@/components/DeviceEmulator";
 
 const Index = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    const setAppHeight = () => {
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty("--app-height", `${height}px`);
+    };
+
+    setAppHeight();
+    window.visualViewport?.addEventListener("resize", setAppHeight);
+    window.addEventListener("resize", setAppHeight);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", setAppHeight);
+      window.removeEventListener("resize", setAppHeight);
+    };
+  }, []);
+
   const appShell = (
-    <main className="relative h-[var(--app-height,100svh)] w-full bg-background text-foreground overflow-hidden">
+    <main className="relative flex h-[var(--app-height,100svh)] w-full flex-col bg-background text-foreground overflow-hidden">
       <AppHeader onOpenSettings={() => setSettingsOpen(true)} />
       <PuzzleFeed />
       <SettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />
