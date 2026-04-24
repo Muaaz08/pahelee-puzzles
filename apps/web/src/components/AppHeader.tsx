@@ -9,28 +9,28 @@ export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
   const timerLabel = timerActive ? `${mm}:${ss}` : `${timerSolved}✓`;
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-30 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 pointer-events-none">
+    <header className="absolute top-0 left-0 right-0 z-30 px-4 pt-[max(env(safe-area-inset-top),10px)] pb-2 sm:pt-[max(env(safe-area-inset-top),12px)] sm:pb-3 pointer-events-none">
       <div className="flex items-center justify-between pointer-events-auto">
-        <button className="h-11 w-11 flex items-center justify-center" aria-label="Profile">
-          <Crown className="h-6 w-6 text-primary" strokeWidth={2.2} />
+        <button className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center" aria-label="Profile">
+          <Crown className="h-5 w-5 sm:h-6 sm:w-6 text-primary" strokeWidth={2.2} />
         </button>
         <h1
-          className="text-2xl font-bold tracking-tight text-primary text-glow flex items-center gap-1.5"
+          className="text-xl sm:text-2xl font-bold tracking-tight text-primary text-glow flex items-center gap-1.5"
           style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
         >
           pahelee
-          <span aria-hidden className="text-primary text-xl">♟</span>
+          <span aria-hidden className="text-primary text-lg sm:text-xl">♟</span>
         </h1>
         <button
           onClick={onOpenSettings}
-          className="h-11 w-11 flex items-center justify-center hover:text-primary transition-colors"
+          className="h-10 w-10 sm:h-11 sm:w-11 flex items-center justify-center hover:text-primary transition-colors"
           aria-label="Settings"
         >
-          <Settings className="h-6 w-6 text-foreground/80" />
+          <Settings className="h-5 w-5 sm:h-6 sm:w-6 text-foreground/80" />
         </button>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2 pointer-events-auto">
+      <div className="mt-2 sm:mt-3 grid grid-cols-2 gap-2 pointer-events-auto">
         <ModePill
           active={mode === "timer"}
           onClick={() => setMode("timer")}
@@ -66,17 +66,17 @@ function ModePill({
   return (
     <button
       onClick={onClick}
-      className={`min-h-12 rounded-full px-3 py-2 border transition-all flex flex-col items-center justify-center gap-0.5 ${
+      className={`min-h-10 sm:min-h-12 rounded-full px-2.5 sm:px-3 py-1.5 sm:py-2 border transition-all flex flex-col items-center justify-center gap-0.5 ${
         active
           ? "bg-primary text-primary-foreground border-primary glow-soft"
           : "bg-card text-foreground/85 border-border"
       }`}
     >
-      <span className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider">
+      <span className="flex items-center gap-1 text-[10px] sm:gap-1.5 sm:text-[11px] font-bold tracking-wider">
         {icon}
         {title}
       </span>
-      <span className={`text-xs font-semibold ${active ? "opacity-90" : "text-muted-foreground"}`}>
+      <span className={`text-[11px] sm:text-xs font-semibold ${active ? "opacity-90" : "text-muted-foreground"}`}>
         {subtitle}
       </span>
     </button>
