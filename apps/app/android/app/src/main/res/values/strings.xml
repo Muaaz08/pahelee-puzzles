@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Pahelee</string>
+    <string name="title_activity_main">Pahelee</string>
+    <string name="package_name">app.pahelee.puzzles</string>
+    <string name="custom_url_scheme">app.pahelee.puzzles</string>
+</resources>
