@@ -83,7 +83,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   };
 
   // Tap-to-move
-  const handleSquareClick = ({ square }: { square: string }) => {
+  const handleSquareClick = (square: string) => {
     if (status === "correct") return;
     const sq = square as Square;
     if (selected) {
@@ -102,7 +102,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     }
   };
 
-  const handlePieceDrop = ({ sourceSquare, targetSquare }: { sourceSquare: string; targetSquare: string | null }) => {
+  const handlePieceDrop = (sourceSquare: string, targetSquare: string) => {
     if (!targetSquare) return false;
     return tryMove(sourceSquare as Square, targetSquare as Square);
   };
@@ -127,23 +127,21 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   return (
     <div className={`w-full ${boardClass} rounded-2xl overflow-hidden`}>
       <Chessboard
-        options={{
-          id: `puzzle-${puzzle.id}`,
-          position,
-          boardOrientation: puzzle.sideToMove === "w" ? "white" : "black",
-          animationDurationInMs: 220,
-          allowDragging: status !== "correct",
-          showNotation: false,
-          lightSquareStyle: { backgroundColor: "hsl(var(--board-light))" },
-          darkSquareStyle: { backgroundColor: "hsl(var(--board-dark))" },
-          squareStyles,
-          boardStyle: {
-            borderRadius: "16px",
-            boxShadow: "0 12px 40px hsl(0 0% 0% / 0.6), 0 0 0 1px hsl(var(--border))",
-          },
-          onPieceDrop: handlePieceDrop,
-          onSquareClick: handleSquareClick,
+        id={`puzzle-${puzzle.id}`}
+        position={position}
+        boardOrientation={puzzle.sideToMove === "w" ? "white" : "black"}
+        animationDuration={220}
+        arePiecesDraggable={status !== "correct"}
+        showBoardNotation={false}
+        customLightSquareStyle={{ backgroundColor: "hsl(var(--board-light))" }}
+        customDarkSquareStyle={{ backgroundColor: "hsl(var(--board-dark))" }}
+        customSquareStyles={squareStyles}
+        customBoardStyle={{
+          borderRadius: "16px",
+          boxShadow: "0 12px 40px hsl(0 0% 0% / 0.6), 0 0 0 1px hsl(var(--border))",
         }}
+        onPieceDrop={handlePieceDrop}
+        onSquareClick={handleSquareClick}
       />
     </div>
   );
