@@ -5,6 +5,43 @@ import type { Puzzle } from "@/data/puzzles";
 
 type Status = "idle" | "wrong" | "correct";
 
+// Standard Wikipedia/cburnett SVG chess pieces. White pieces have white fill
+// + black stroke; black pieces have black fill + black stroke. This guarantees
+// correct contrast on any board theme.
+const PIECE_KEYS = ["wP","wN","wB","wR","wQ","wK","bP","bN","bB","bR","bQ","bK"] as const;
+type PieceKey = typeof PIECE_KEYS[number];
+
+const PIECE_URLS: Record<PieceKey, string> = {
+  wK: "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg",
+  wQ: "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg",
+  wR: "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg",
+  wB: "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg",
+  wN: "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg",
+  wP: "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg",
+  bK: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg",
+  bQ: "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg",
+  bR: "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg",
+  bB: "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg",
+  bN: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg",
+  bP: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg",
+};
+
+const customPieces = PIECE_KEYS.reduce((acc, key) => {
+  acc[key] = ({ squareWidth }: { squareWidth: number }) => (
+    <div
+      style={{
+        width: squareWidth,
+        height: squareWidth,
+        backgroundImage: `url(${PIECE_URLS[key]})`,
+        backgroundSize: "100%",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+      }}
+    />
+  );
+  return acc;
+}, {} as Record<PieceKey, (props: { squareWidth: number }) => JSX.Element>);
+
 type Props = {
   puzzle: Puzzle;
   onSolved: () => void;
@@ -136,6 +173,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
         customLightSquareStyle={{ backgroundColor: "hsl(var(--board-light))" }}
         customDarkSquareStyle={{ backgroundColor: "hsl(var(--board-dark))" }}
         customSquareStyles={squareStyles}
+        customPieces={customPieces}
         customBoardStyle={{
           borderRadius: "16px",
           boxShadow: "0 12px 40px hsl(0 0% 0% / 0.6), 0 0 0 1px hsl(var(--border))",
