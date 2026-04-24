@@ -19,7 +19,7 @@ export type Puzzle = {
 export const PUZZLES: Puzzle[] = [
   {
     id: 1247,
-    // Back-rank mate in 1: White queen delivers Qd8#
+    // Back-rank mate in 1 — Qd8#
     fen: "6k1/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1",
     solution: ["d1d8"],
     sideToMove: "w",
@@ -30,8 +30,7 @@ export const PUZZLES: Puzzle[] = [
   },
   {
     id: 1248,
-    // Smothered mate setup: Knight to f7 is mate (king on h8, rook h7? simplified):
-    // Use a clean fork tactic instead — Knight fork on c7 winning queen+rook.
+    // Knight fork — Nb5 attacks queen on d5 and threatens Nc7+
     fen: "r3k2r/ppp2ppp/2n5/3qp3/8/2N5/PPP2PPP/R3K2R w KQkq - 0 1",
     solution: ["c3b5"],
     sideToMove: "w",
@@ -42,8 +41,8 @@ export const PUZZLES: Puzzle[] = [
   },
   {
     id: 1249,
-    // Classic pin: Bg5 pins the knight on f6 to the queen on d8
-    fen: "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 0 1",
+    // Classic pin — Bg5 pins the knight on f6 to the queen on d8
+    fen: "rnbqkb1r/pppp1ppp/5n2/4p3/3PP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 1",
     solution: ["c1g5"],
     sideToMove: "w",
     rating: 1100,
@@ -53,28 +52,26 @@ export const PUZZLES: Puzzle[] = [
   },
   {
     id: 1250,
-    // Black to move — Skewer: ...Re1+ wins material after Kxe1 (or similar).
-    // Simple Black tactic: ...Qxh2# (king on g1, no defenders)
-    fen: "6k1/5ppp/8/8/8/8/5PPq/6K1 b - - 0 1",
-    solution: ["h2h1"],
+    // Black to move — back-rank mate ...Ra1#
+    fen: "r5k1/8/8/8/8/8/5PPP/6K1 b - - 0 1",
+    solution: ["a8a1"],
     sideToMove: "b",
     rating: 800,
     difficulty: "Easy",
-    theme: "Mate in 1",
-    tags: ["mate", "queen"],
+    theme: "Back-Rank Mate",
+    tags: ["mate", "back-rank"],
   },
   {
     id: 1251,
-    // Discovered attack / mate: Qh5xh7#
-    fen: "rnbqkb1r/pppp1Qpp/5n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 1",
-    solution: [],
-    sideToMove: "b",
+    // Scholar's mate — Qxf7#
+    fen: "r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 1",
+    solution: ["h5f7"],
+    sideToMove: "w",
     rating: 700,
     difficulty: "Easy",
-    theme: "Recognize Mate",
+    theme: "Mate in 1",
     tags: ["mate", "scholars"],
   },
 ];
 
-// Filter out the demo "no solution" placeholder so gameplay always has a target move.
 export const PLAYABLE_PUZZLES: Puzzle[] = PUZZLES.filter((p) => p.solution.length > 0);
