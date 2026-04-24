@@ -49,84 +49,92 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
       {/* Top spacer for header (logo + mode pills) */}
       <div className="h-[140px] shrink-0" />
 
-      <div className="flex-1 flex flex-col px-4 min-h-0">
-        {/* Meta row */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
-            #{puzzle.id}
-          </span>
-          <span className={`text-xs font-extrabold tracking-wider ${diffColor[puzzle.difficulty]}`}>
-            {puzzle.difficulty.toUpperCase()}
-          </span>
-          <button className="h-7 w-7 flex items-center justify-center text-muted-foreground" aria-label="More">
-            <MoreHorizontal className="h-5 w-5" />
-          </button>
+      <div className="flex-1 flex flex-col justify-between px-4 min-h-0">
+        {/* Top group: meta + title */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
+              #{puzzle.id}
+            </span>
+            <span className={`text-xs font-extrabold tracking-wider ${diffColor[puzzle.difficulty]}`}>
+              {puzzle.difficulty.toUpperCase()}
+            </span>
+            <button className="h-7 w-7 flex items-center justify-center text-muted-foreground" aria-label="More">
+              <MoreHorizontal className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="text-center">
+            <h2
+              className="text-3xl font-extrabold leading-tight"
+              style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
+            >
+              <span className="text-primary text-glow">{sideLabel}</span>{" "}
+              <span className="text-foreground">to move</span>
+            </h2>
+            <p className="text-sm text-muted-foreground mt-0.5">Find the best move</p>
+          </div>
         </div>
 
-        {/* Centered title */}
-        <div className="mt-1 text-center">
-          <h2
-            className="text-3xl font-extrabold leading-tight"
-            style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
+        {/* Middle: board — grows to fill available space */}
+        <div className="flex-1 flex items-center justify-center min-h-0">
+          <motion.div
+            initial={{ opacity: 0, y: 12, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-md mx-auto flex flex-col items-center justify-center h-full"
           >
-            <span className="text-primary text-glow">{sideLabel}</span>{" "}
-            <span className="text-foreground">to move</span>
-          </h2>
-          <p className="text-sm text-muted-foreground mt-0.5">Find the best move</p>
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="w-full max-w-md">
+                <PuzzleBoard
+                  puzzle={puzzle}
+                  onSolved={handleSolved}
+                  onWrong={handleWrong}
+                  onAttempt={registerAttempt}
+                  hintRequested={hintRequested}
+                />
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Board */}
-        <motion.div
-          initial={{ opacity: 0, y: 12, scale: 0.99 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-3 w-full max-w-md mx-auto"
-        >
-          <PuzzleBoard
-            puzzle={puzzle}
-            onSolved={handleSolved}
-            onWrong={handleWrong}
-            onAttempt={registerAttempt}
-            hintRequested={hintRequested}
-          />
-        </motion.div>
+        {/* Bottom group: status + tip */}
+        <div className="space-y-2">
+          <div className="h-5 flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              {solved && (
+                <motion.span
+                  key="ok"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-primary font-bold text-sm text-glow"
+                >
+                  ✓ Brilliant! Next puzzle…
+                </motion.span>
+              )}
+              {feedback === "wrong" && !solved && (
+                <motion.span
+                  key="bad"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="text-red-400 font-bold text-sm"
+                >
+                  Not quite — try again
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </div>
 
-        {/* Status line */}
-        <div className="mt-2 h-5 flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            {solved && (
-              <motion.span
-                key="ok"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="text-primary font-bold text-sm text-glow"
-              >
-                ✓ Brilliant! Next puzzle…
-              </motion.span>
-            )}
-            {feedback === "wrong" && !solved && (
-              <motion.span
-                key="bad"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="text-red-400 font-bold text-sm"
-              >
-                Not quite — try again
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Inspirational tip card */}
-        <div className="mt-2 mx-auto w-full max-w-md rounded-2xl border border-border bg-card/70 px-4 py-3 flex items-start gap-3">
-          <Lightbulb className="h-5 w-5 text-primary mt-0.5 shrink-0" />
-          <p className="text-sm text-foreground/85 leading-snug">
-            Think sharp, play smart.
-            <br />
-            Every puzzle, a stronger you.
-          </p>
+          <div className="mx-auto w-full max-w-md rounded-2xl border border-border bg-card/70 px-4 py-3 flex items-start gap-3">
+            <Lightbulb className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <p className="text-sm text-foreground/85 leading-snug">
+              Think sharp, play smart.
+              <br />
+              Every puzzle, a stronger you.
+            </p>
+          </div>
         </div>
       </div>
 
