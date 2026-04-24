@@ -3,6 +3,7 @@ import { Chessboard } from "react-chessboard";
 import { TouchBackend } from "react-dnd-touch-backend";
 import { useEffect, useRef, useState } from "react";
 import type { Puzzle } from "@/data/puzzles";
+import { useChessSounds } from "@/hooks/useChessSounds";
 
 type Status = "idle" | "wrong" | "replying" | "solved";
 
@@ -27,6 +28,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   const [hintSquare, setHintSquare] = useState<Square | null>(null);
   const [solutionIndex, setSolutionIndex] = useState(0);
   const replyTimer = useRef<number | null>(null);
+  const { playMove, playIllegal, playVictory } = useChessSounds();
 
   // Reset whenever puzzle changes
   useEffect(() => {
@@ -71,7 +73,10 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     } catch {
       move = null;
     }
-    if (!move) return false; // illegal — let board snap back
+    if (!move) {
+      playIllegal();
+      return false;
+    }
 
     const playedUci = `${move.from}${move.to}${move.promotion ?? ""}`;
     const expectedUci = target.length > 4 ? target : `${expectedFrom}${expectedTo}`;
@@ -79,6 +84,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     onAttempt?.(isCorrect);
 
     if (isCorrect) {
+      playMove();
       const afterUserMove = trial.fen();
       const nextIndex = solutionIndex + 1;
       setPosition(trial.fen());
@@ -87,6 +93,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
       if (nextIndex >= puzzle.solution.length) {
         setStatus("solved");
         setSolutionIndex(nextIndex);
+        playVictory();
         onSolved();
         return true;
       }
@@ -104,7 +111,10 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
           setPosition(replyGame.fen());
           setSolutionIndex(nextIndex + 1);
           setStatus(nextIndex + 1 >= puzzle.solution.length ? "solved" : "idle");
-          if (nextIndex + 1 >= puzzle.solution.length) onSolved();
+          if (nextIndex + 1 >= puzzle.solution.length) {
+            playVictory();
+            onSolved();
+          }
         } catch {
           setSolutionIndex(nextIndex);
           setStatus("idle");
