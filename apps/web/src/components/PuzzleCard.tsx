@@ -77,7 +77,9 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
               <span className="text-primary text-glow">{sideLabel}</span>{" "}
               <span className="text-foreground">to move</span>
             </h2>
-            <p className="text-[11px] text-muted-foreground sm:mt-0.5 sm:text-sm">Find the best move</p>
+            <p className="text-[11px] text-muted-foreground sm:mt-0.5 sm:text-sm">
+              {puzzle.theme} - {puzzle.rating}
+            </p>
           </div>
         </div>
 

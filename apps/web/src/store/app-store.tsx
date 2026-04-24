@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AppPersisted, loadState, saveState } from "@/lib/storage";
+import type { LichessPuzzleDifficulty, LichessPuzzleTheme } from "@/lib/lichess-puzzles";
 
 export type Mode = "infinite" | "timer";
 
 type Ctx = {
   // persisted
-  liked: Set<number>;
-  saved: Set<number>;
+  liked: Set<number | string>;
+  saved: Set<number | string>;
   bestStreak: number;
   totalSolved: number;
   attempts: number;
@@ -16,12 +17,16 @@ type Ctx = {
   // session
   mode: Mode;
   setMode: (m: Mode) => void;
+  puzzleTheme: LichessPuzzleTheme;
+  setPuzzleTheme: (theme: LichessPuzzleTheme) => void;
+  puzzleDifficulty: LichessPuzzleDifficulty;
+  setPuzzleDifficulty: (difficulty: LichessPuzzleDifficulty) => void;
   streak: number;
-  registerSolve: (puzzleId: number) => void;
+  registerSolve: (puzzleId: number | string) => void;
   registerWrong: () => void;
   registerAttempt: (correct: boolean) => void;
-  toggleLike: (id: number) => void;
-  toggleSave: (id: number) => void;
+  toggleLike: (id: number | string) => void;
+  toggleSave: (id: number | string) => void;
   resetStreak: () => void;
 
   // timer
@@ -39,6 +44,8 @@ const AppContext = createContext<Ctx | null>(null);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [persisted, setPersisted] = useState<AppPersisted>(() => loadState());
   const [mode, setMode] = useState<Mode>("infinite");
+  const [puzzleTheme, setPuzzleTheme] = useState<LichessPuzzleTheme>("mix");
+  const [puzzleDifficulty, setPuzzleDifficulty] = useState<LichessPuzzleDifficulty>("normal");
   const [streak, setStreak] = useState(0);
 
   const [timerDurationSec, setTimerDurationSec] = useState(120);
@@ -69,7 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTimerActive(false);
   }, []);
 
-  const registerSolve = useCallback((_puzzleId: number) => {
+  const registerSolve = useCallback((_puzzleId: number | string) => {
     setPersisted((p) => ({
       ...p,
       totalSolved: p.totalSolved + 1,
@@ -91,18 +98,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  const toggleLike = useCallback((id: number) => {
+  const toggleLike = useCallback((id: number | string) => {
     setPersisted((p) => {
       const next = new Set(p.liked);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return { ...p, liked: Array.from(next) };
     });
   }, []);
 
-  const toggleSave = useCallback((id: number) => {
+  const toggleSave = useCallback((id: number | string) => {
     setPersisted((p) => {
       const next = new Set(p.saved);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return { ...p, saved: Array.from(next) };
     });
   }, []);
@@ -118,12 +127,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     correctMoves: persisted.correctMoves,
     accuracy: persisted.attempts ? Math.round((persisted.correctMoves / persisted.attempts) * 100) : 0,
     mode, setMode,
+    puzzleTheme, setPuzzleTheme,
+    puzzleDifficulty, setPuzzleDifficulty,
     streak,
     registerSolve, registerWrong, registerAttempt,
     toggleLike, toggleSave, resetStreak,
     timerDurationSec, setTimerDurationSec,
     timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved,
-  }), [persisted, mode, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved]);
+  }), [persisted, mode, puzzleTheme, puzzleDifficulty, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

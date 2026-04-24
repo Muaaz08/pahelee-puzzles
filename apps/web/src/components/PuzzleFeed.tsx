@@ -1,25 +1,39 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { PuzzleCard } from "./PuzzleCard";
-import { PLAYABLE_PUZZLES } from "@/data/puzzles";
-
-/**
- * Builds an "endless" stream by repeating the demo puzzles.
- * For MVP we render a generous window (50) which is more than enough.
- */
-function buildStream(count = 50) {
-  const out = [] as { key: string; puzzle: typeof PLAYABLE_PUZZLES[number] }[];
-  for (let i = 0; i < count; i++) {
-    const p = PLAYABLE_PUZZLES[i % PLAYABLE_PUZZLES.length];
-    out.push({ key: `${p.id}-${i}`, puzzle: p });
-  }
-  return out;
-}
+import { Button } from "@/components/ui/button";
+import { fetchLichessPuzzles } from "@/lib/lichess-puzzles";
+import { useApp } from "@/store/app-store";
 
 export function PuzzleFeed() {
+  const { puzzleTheme, puzzleDifficulty } = useApp();
   const containerRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const stream = useMemo(() => buildStream(50), []);
+  const query = useInfiniteQuery({
+    queryKey: ["lichess-puzzles", puzzleTheme, puzzleDifficulty],
+    initialPageParam: 0,
+    queryFn: () => fetchLichessPuzzles({ theme: puzzleTheme, difficulty: puzzleDifficulty, count: 15 }),
+    getNextPageParam: (lastPage, pages) => (lastPage.length > 0 ? pages.length : undefined),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const stream = useMemo(
+    () =>
+      query.data?.pages.flatMap((page, pageIndex) =>
+        page.map((puzzle, puzzleIndex) => ({
+          key: `${puzzleTheme}-${puzzleDifficulty}-${puzzle.id}-${pageIndex}-${puzzleIndex}`,
+          puzzle,
+        })),
+      ) ?? [],
+    [puzzleDifficulty, puzzleTheme, query.data],
+  );
+
+  useEffect(() => {
+    setActiveIndex(0);
+    sectionRefs.current = [];
+    containerRef.current?.scrollTo({ top: 0 });
+  }, [puzzleTheme, puzzleDifficulty]);
 
   // Track which puzzle is most centered
   useEffect(() => {
@@ -40,10 +54,40 @@ export function PuzzleFeed() {
     return () => obs.disconnect();
   }, [stream.length]);
 
+  useEffect(() => {
+    if (
+      stream.length > 0 &&
+      activeIndex >= stream.length - 5 &&
+      query.hasNextPage &&
+      !query.isFetchingNextPage
+    ) {
+      query.fetchNextPage();
+    }
+  }, [activeIndex, query, stream.length]);
+
   const advance = (fromIndex: number) => {
     const next = sectionRefs.current[fromIndex + 1];
     if (next) next.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  if (query.isPending) {
+    return (
+      <FeedState
+        title="Loading Lichess puzzles"
+        body="Finding fresh tactics for this theme..."
+      />
+    );
+  }
+
+  if (query.isError || stream.length === 0) {
+    return (
+      <FeedState
+        title="Could not load puzzles"
+        body="Check your connection, then try Lichess again."
+        action={<Button onClick={() => query.refetch()}>Retry</Button>}
+      />
+    );
+  }
 
   return (
     <div
@@ -66,6 +110,18 @@ export function PuzzleFeed() {
           />
         </div>
       ))}
+    </div>
+  );
+}
+
+function FeedState({ title, body, action }: { title: string; body: string; action?: React.ReactNode }) {
+  return (
+    <div className="min-h-0 flex-1 w-full flex items-center justify-center px-6">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-lg">
+        <h2 className="text-lg font-extrabold text-foreground">{title}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">{body}</p>
+        {action && <div className="mt-4 flex justify-center">{action}</div>}
+      </div>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 const KEY = "pahelee:v1";
 
 export type AppPersisted = {
-  liked: number[];
-  saved: number[];
+  liked: Array<number | string>;
+  saved: Array<number | string>;
   bestStreak: number;
   totalSolved: number;
   attempts: number;

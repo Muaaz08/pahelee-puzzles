@@ -1,7 +1,7 @@
 export type Difficulty = "Easy" | "Medium" | "Hard";
 
 export type Puzzle = {
-  id: number;
+  id: number | string;
   fen: string;
   /** Solution as UCI moves, e.g. "e2e4". The first move is the player's move. */
   solution: string[];

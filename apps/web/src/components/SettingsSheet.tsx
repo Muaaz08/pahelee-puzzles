@@ -1,5 +1,6 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { useApp } from "@/store/app-store";
+import { LICHESS_PUZZLE_DIFFICULTIES, LICHESS_PUZZLE_THEMES } from "@/lib/lichess-puzzles";
 import { Flame, Target, Trophy } from "lucide-react";
 
 export function SettingsSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
@@ -7,6 +8,8 @@ export function SettingsSheet({ open, onOpenChange }: { open: boolean; onOpenCha
     bestStreak, totalSolved, accuracy,
     timerDurationSec, setTimerDurationSec,
     startTimer, stopTimer, timerActive, mode, setMode,
+    puzzleTheme, setPuzzleTheme,
+    puzzleDifficulty, setPuzzleDifficulty,
   } = useApp();
 
   const durations = [60, 120, 300, 600];
@@ -22,6 +25,44 @@ export function SettingsSheet({ open, onOpenChange }: { open: boolean; onOpenCha
           <Stat icon={<Trophy className="h-4 w-4 text-primary" />} label="Solved" value={totalSolved} />
           <Stat icon={<Flame className="h-4 w-4 text-primary" />} label="Best streak" value={bestStreak} />
           <Stat icon={<Target className="h-4 w-4 text-primary" />} label="Accuracy" value={`${accuracy}%`} />
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-2">Puzzle style</h3>
+          <div className="grid grid-cols-4 gap-2">
+            {LICHESS_PUZZLE_THEMES.map((theme) => (
+              <button
+                key={theme.value}
+                onClick={() => setPuzzleTheme(theme.value)}
+                className={`px-2 py-2 rounded-xl text-xs font-semibold border transition-all ${
+                  puzzleTheme === theme.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border"
+                }`}
+              >
+                {theme.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-bold mb-2">Difficulty</h3>
+          <div className="flex gap-2 flex-wrap">
+            {LICHESS_PUZZLE_DIFFICULTIES.map((difficulty) => (
+              <button
+                key={difficulty.value}
+                onClick={() => setPuzzleDifficulty(difficulty.value)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+                  puzzleDifficulty === difficulty.value
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border"
+                }`}
+              >
+                {difficulty.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-6">
@@ -69,7 +110,7 @@ export function SettingsSheet({ open, onOpenChange }: { open: boolean; onOpenCha
         </div>
 
         <p className="text-[11px] text-muted-foreground mt-6 text-center">
-          More puzzles, accounts, leaderboards & themes coming soon.
+          Puzzles are served by Lichess. Accounts and leaderboards coming soon.
         </p>
       </SheetContent>
     </Sheet>
