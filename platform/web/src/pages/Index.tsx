@@ -39,7 +39,6 @@ const Index = () => {
     </main>
   );
 
-  // return <DeviceEmulator>{appShell}</DeviceEmulator>;
   return appShell;
 };
 
