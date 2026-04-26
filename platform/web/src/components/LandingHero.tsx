@@ -24,7 +24,7 @@ const LandingHero = () => {
             />
           </div>
 
-          <div className="w-full flex-1 min-h-0">
+          <div className="w-full flex-1 min-h-0 min-h-[72px]">
             <div className="mt-2 flex w-full gap-2 rounded-full bg-muted p-1">
               <button
                 aria-pressed={mode === "infinite"}
@@ -59,7 +59,7 @@ const LandingHero = () => {
         </div>
 
         {/* Right column: headline & CTA (65%) */}
-        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6 min-h-0">
+        <div className="flex flex-col items-center justify-between gap-6 rounded-lg bg-surface/60 p-6 min-h-0">
           <div className="text-center">
             <h1 className="text-3xl font-extrabold">PaheliChess</h1>
             <p className="mt-2 max-w-prose text-sm text-muted-foreground">
