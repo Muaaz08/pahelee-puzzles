@@ -18,7 +18,7 @@ const LandingHero = () => {
           <img
             src="./assets/PaheliChess-Logo.png"
             alt="PaheliChess"
-            className="w-40 h-40 lg:w-48 lg:h-48 object-contain"
+            className="w-56 h-56 lg:w-72 lg:h-72 object-contain"
           />
         </div>
 
