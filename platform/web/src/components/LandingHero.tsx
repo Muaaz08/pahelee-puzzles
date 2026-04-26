@@ -15,14 +15,18 @@ const LandingHero = () => {
 
   return (
     <section className="w-full h-full">
-      <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-[35%_65%]">
+      <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-[35%_65%] min-h-0">
         {/* Left column: logo (35%) and mode */}
-        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6">
-          <div className="flex h-1/2 w-full items-center justify-center">
-            <img src="/images/PaheliChess-Logo.png" alt="PaheliChess" className="w-40 h-40 object-contain" />
+        <div className="flex flex-col items-center justify-between gap-6 rounded-lg bg-surface/60 p-6 min-h-0">
+          <div className="flex items-center justify-center flex-none">
+            <img
+              src="/images/PaheliChess-Logo.png"
+              alt="PaheliChess"
+              className="w-44 h-44 object-contain"
+            />
           </div>
 
-          <div className="w-full">
+          <div className="w-full flex-1 min-h-0">
             <span className="text-sm font-medium">Mode</span>
             <div className="mt-2 flex w-full gap-2 rounded-full bg-muted p-1">
               <button
@@ -58,10 +62,13 @@ const LandingHero = () => {
         </div>
 
         {/* Right column: headline & CTA (65%) */}
-        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6">
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6 min-h-0">
           <div className="text-center">
-            <h1 className="text-3xl font-extrabold">PaheliChess — Puzzle Practice</h1>
-            <p className="mt-2 max-w-prose text-sm text-muted-foreground">Fast, focused puzzle solving. Choose Infinite for uninterrupted practice or Timer to train under pressure.</p>
+            <h1 className="text-3xl font-extrabold">PaheliChess</h1>
+            <p className="mt-2 max-w-prose text-sm text-muted-foreground">
+              Fast, focused puzzle solving. Choose Infinite for uninterrupted
+              practice or Timer mode to train under pressure.
+            </p>
           </div>
 
           <div className="w-full max-w-xs">
