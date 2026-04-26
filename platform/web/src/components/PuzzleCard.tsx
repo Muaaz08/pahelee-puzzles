@@ -5,6 +5,7 @@ import { ChevronUp, ExternalLink } from "lucide-react";
 import { PuzzleBoard } from "./PuzzleBoard";
 import { ActionBar } from "./ActionBar";
 import { useApp } from "@/store/app-store";
+import { useRewards } from "@/hooks/useRewards";
 import type { Puzzle } from "@/data/puzzles";
 
 type Props = {
@@ -21,7 +22,9 @@ const diffColor: Record<Puzzle["difficulty"], string> = {
 };
 
 export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props) {
-  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode, timerRemainingSec, timerActive, timerSolved, puzzleTimeSec } = useApp();
+  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode, timerRemainingSec, timerActive, timerSolved, puzzleTimeSec, streak } = useApp();
+  const { rewardState, wrongState, triggerSuccess, triggerWrong, dismissHintPrompt } = useRewards();
+  
   const [solved, setSolved] = useState(false);
   const [feedback, setFeedback] = useState<"" | "wrong">("");
   const [hintRequested, setHintRequested] = useState(0);
@@ -55,14 +58,19 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
   }
 
   const handleSolved = () => {
+    const isFast = puzzleTimeSec < 8;
+    triggerSuccess(puzzle.id, puzzleTimeSec, hintsUsed, puzzle.rating);
     setSolved(true);
-    registerSolve(puzzle.id);
     window.setTimeout(() => onAdvance(), 1200);
   };
 
   const handleWrong = () => {
     setFeedback("wrong");
     registerWrong();
+    triggerWrong(puzzle.theme, () => {
+      setHintRequested((n) => n + 1);
+      setHintsUsed((n) => n + 1);
+    });
     window.setTimeout(() => setFeedback(""), 700);
   };
 
@@ -137,7 +145,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
         <div className="shrink-0 md:hidden">
           <div className="min-h-4 sm:min-h-5 flex flex-col items-center justify-center">
             <AnimatePresence mode="wait">
-              {solved && (
+              {solved && rewardState.showSuccess && (
                 <motion.span
                   key="ok"
                   initial={{ opacity: 0, y: 6 }}
@@ -145,10 +153,10 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
                   exit={{ opacity: 0 }}
                   className="text-primary font-bold text-xs sm:text-sm text-glow"
                 >
-                  ✓ Brilliant! Next puzzle…
+                  ✓ {rewardState.successPhrase}
                 </motion.span>
               )}
-              {feedback === "wrong" && !solved && (
+              {feedback === "wrong" && wrongState.showWrong && (
                 <motion.span
                   key="bad"
                   initial={{ opacity: 0, y: 6 }}
@@ -156,7 +164,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
                   exit={{ opacity: 0 }}
                   className="text-red-400 font-bold text-xs sm:text-sm"
                 >
-                  Not quite — try again
+                  {wrongState.wrongPhrase}
                 </motion.span>
               )}
             </AnimatePresence>
