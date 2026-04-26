@@ -19,8 +19,12 @@ export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
           className="text-2xl sm:text-3xl font-extrabold tracking-tight text-primary text-glow flex items-center gap-2"
           style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
         >
-          pahelee
-          <span aria-hidden className="text-primary text-2xl sm:text-3xl">♟</span>
+          <img
+            src="/images/PaheliChess-Logo.png"
+            alt="PaheliChess"
+            className="w-20 h-20 object-contain"
+            height="50px"
+          />
         </h1>
         <button
           onClick={onOpenSettings}
