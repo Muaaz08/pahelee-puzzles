@@ -18,6 +18,7 @@ type Props = {
 const dragBackendOptions = {
   enableMouseEvents: true,
   enableTouchEvents: true,
+  nativeTouch: false,
 };
 
 export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequested }: Props) {
@@ -207,13 +208,11 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   }
 
   const handlePieceDragBegin = (square: Square) => {
-    console.log("[PuzzleBoard] dragBegin:", square);
     if (status !== "idle") return;
     setActiveSquare(square);
   };
 
   const handlePieceDragEnd = () => {
-    console.log("[PuzzleBoard] dragEnd");
     setActiveSquare(null);
   };
 
