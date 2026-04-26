@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronUp, MoreHorizontal } from "lucide-react";
+import { ChevronUp, ExternalLink } from "lucide-react";
 import { PuzzleBoard } from "./PuzzleBoard";
 import { ActionBar } from "./ActionBar";
 import { useApp } from "@/store/app-store";
@@ -21,7 +21,7 @@ const diffColor: Record<Puzzle["difficulty"], string> = {
 };
 
 export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props) {
-  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode } = useApp();
+  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode, timerRemainingSec, timerActive, timerSolved, puzzleTimeSec } = useApp();
   const [solved, setSolved] = useState(false);
   const [feedback, setFeedback] = useState<"" | "wrong">("");
   const [hintRequested, setHintRequested] = useState(0);
@@ -37,6 +37,18 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
       }
     };
   }, [isActive, mode, startPuzzleTimer, stopPuzzleTimer]);
+
+  const formatTime = (sec: number) => {
+    const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+    const ss = String(sec % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  };
+
+  const modeTimerLabel = mode === "timer"
+    ? timerActive
+      ? formatTime(timerRemainingSec)
+      : `${timerSolved}✓`
+    : formatTime(puzzleTimeSec);
 
   if (!isActive && solved) {
     // no-op; reset happens via key remount
@@ -61,7 +73,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
       className="relative h-full w-full snap-start-always flex flex-col overflow-hidden"
       style={
         {
-          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 200px))",
+          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 120px))",
         } as CSSProperties
       }
     >
@@ -75,8 +87,12 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
             <span className={`text-xs font-extrabold tracking-wider ${diffColor[puzzle.difficulty]}`}>
               {puzzle.difficulty.toUpperCase()}
             </span>
-            <button className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center text-muted-foreground" aria-label="More">
-              <MoreHorizontal className="h-5 w-5" />
+            <button
+              onClick={() => window.open(`https://lichess.org/training/${puzzle.id}`, "_blank")}
+              className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+              aria-label="Open on Lichess"
+            >
+              <ExternalLink className="h-5 w-5" />
             </button>
           </div>
 
@@ -117,9 +133,9 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
           </motion.div>
         </div>
 
-        {/* Bottom group: status */}
+        {/* Bottom group: status + mode-timer */}
         <div className="shrink-0">
-          <div className="h-4 sm:h-5 flex items-center justify-center">
+          <div className="min-h-4 sm:min-h-5 flex flex-col items-center justify-center">
             <AnimatePresence mode="wait">
               {solved && (
                 <motion.span
@@ -144,6 +160,15 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
                 </motion.span>
               )}
             </AnimatePresence>
+          </div>
+          <div className="flex items-center justify-center gap-2 py-1 text-xs sm:text-sm font-semibold">
+            <span className={`${mode === "timer" ? "text-primary" : "text-foreground/70"}`}>
+              {mode === "timer" ? "TIMER" : "INFINITE"}
+            </span>
+            <span className="text-muted-foreground">|</span>
+            <span className="font-mono tabular-nums">
+              {modeTimerLabel}
+            </span>
           </div>
         </div>
       </div>
