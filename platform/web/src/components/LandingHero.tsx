@@ -71,7 +71,7 @@ const LandingHero = () => {
           <div className="w-full max-w-xs">
             <button
               onClick={handlePlay}
-              className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-black shadow-md hover:scale-[1.02] transition-transform"
+              className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-black shadow-md active:scale-[1.02] transition-transform"
               aria-label="Play now"
             >
               Play Now
