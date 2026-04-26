@@ -1,16 +1,14 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApp } from "@/store/app-store";
 
 const presets = [3, 5, 10];
 
 const LandingHero = () => {
-  const [mode, setMode] = useState<"infinite" | "timer">("infinite");
-  const [time, setTime] = useState<number>(5);
+  const { mode, setMode, timerDurationSec, setTimerDurationSec } = useApp();
   const navigate = useNavigate();
 
   const handlePlay = () => {
-    if (mode === "infinite") navigate(`/arena?mode=infinite`);
-    else navigate(`/arena?mode=timer&time=${time}`);
+    navigate(`/arena`);
   };
 
   return (
@@ -50,8 +48,8 @@ const LandingHero = () => {
                 {presets.map((p) => (
                   <button
                     key={p}
-                    onClick={() => setTime(p)}
-                    className={`flex-1 rounded-md px-3 py-2 text-sm ${time === p ? "bg-lime-500 text-black font-semibold" : "bg-surface text-foreground/80"}`}
+                    onClick={() => setTimerDurationSec(p * 60)}
+                    className={`flex-1 rounded-md px-3 py-2 text-sm ${timerDurationSec === p * 60 ? "bg-lime-500 text-black font-semibold" : "bg-surface text-foreground/80"}`}
                   >
                     {p}m
                   </button>

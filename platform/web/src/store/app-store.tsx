@@ -43,15 +43,26 @@ const AppContext = createContext<Ctx | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [persisted, setPersisted] = useState<AppPersisted>(() => loadState());
-  const [mode, setMode] = useState<Mode>("infinite");
+  const [mode, setModeInternal] = useState<Mode>(() => loadState().mode);
   const [puzzleTheme, setPuzzleTheme] = useState<LichessPuzzleTheme>("mix");
   const [puzzleDifficulty, setPuzzleDifficulty] = useState<LichessPuzzleDifficulty>("normal");
   const [streak, setStreak] = useState(0);
 
-  const [timerDurationSec, setTimerDurationSec] = useState(120);
-  const [timerRemainingSec, setTimerRemainingSec] = useState(120);
+  const [timerDurationSec, setTimerDurationSecInternal] = useState(() => loadState().timerDurationSec);
+  const [timerRemainingSec, setTimerRemainingSec] = useState(() => loadState().timerDurationSec);
   const [timerActive, setTimerActive] = useState(false);
   const [timerSolved, setTimerSolved] = useState(0);
+
+  const setMode = useCallback((m: Mode) => {
+    setModeInternal(m);
+    setPersisted((p) => ({ ...p, mode: m }));
+  }, []);
+
+  const setTimerDurationSec = useCallback((s: number) => {
+    setTimerDurationSecInternal(s);
+    setTimerRemainingSec(s);
+    setPersisted((p) => ({ ...p, timerDurationSec: s }));
+  }, []);
 
   useEffect(() => saveState(persisted), [persisted]);
 
@@ -134,7 +145,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleLike, toggleSave, resetStreak,
     timerDurationSec, setTimerDurationSec,
     timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved,
-  }), [persisted, mode, puzzleTheme, puzzleDifficulty, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved]);
+  }), [persisted, mode, setMode, puzzleTheme, puzzleDifficulty, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, setTimerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

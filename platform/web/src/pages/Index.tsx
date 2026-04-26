@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
-import { AppProvider } from "@/store/app-store";
 import { AppHeader } from "@/components/AppHeader";
 import { PuzzleFeed } from "@/components/PuzzleFeed";
 import { SettingsSheet } from "@/components/SettingsSheet";
 import { DeviceEmulator } from "@/components/DeviceEmulator";
+import { useApp } from "@/store/app-store";
 
 const Index = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { mode, startTimer } = useApp();
+
+  useEffect(() => {
+    if (mode === "timer") {
+      startTimer();
+    }
+  }, [mode, startTimer]);
 
   useEffect(() => {
     const setAppHeight = () => {
@@ -32,11 +39,7 @@ const Index = () => {
     </main>
   );
 
-  return (
-    <AppProvider>
-      <DeviceEmulator>{appShell}</DeviceEmulator>
-    </AppProvider>
-  );
+  return <DeviceEmulator>{appShell}</DeviceEmulator>;
 };
 
 export default Index;

@@ -7,6 +7,8 @@ export type AppPersisted = {
   totalSolved: number;
   attempts: number;
   correctMoves: number;
+  mode: "infinite" | "timer";
+  timerDurationSec: number;
 };
 
 const DEFAULTS: AppPersisted = {
@@ -16,6 +18,8 @@ const DEFAULTS: AppPersisted = {
   totalSolved: 0,
   attempts: 0,
   correctMoves: 0,
+  mode: "infinite",
+  timerDurationSec: 300,
 };
 
 export function loadState(): AppPersisted {
