@@ -26,6 +26,10 @@ export default defineConfig(({ mode }) => ({
           src: "public/images/*",
           dest: "assets",
         },
+        {
+          src: "public/sounds/*",
+          dest: "assets",
+        },
       ],
     }),
   ].filter(Boolean),

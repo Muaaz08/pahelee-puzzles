@@ -1,10 +1,10 @@
 'use client';
 
 const SOUND_SRC = {
-  move: '/sounds/chess-move.mp3',
-  illegal: '/sounds/illegal-move.mp3',
-  victory: '/sounds/victory-bell.mp3',
-  incorrect: '/sounds/incorrect-move.mp3',
+  move: './assets/chess-move.mp3',
+  illegal: './assets/illegal-move.mp3',
+  victory: './assets/victory-bell.mp3',
+  incorrect: './assets/incorrect-move.mp3',
 };
 
 let audioCtx: AudioContext | null = null;
