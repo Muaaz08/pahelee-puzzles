@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "workspaces": [
-    "apps/web",
-    "apps/app"
+    "platform/web",
+    "platform/app"
   ],
   "scripts": {
     "dev": "npm run dev --workspace @pahelee/web",
