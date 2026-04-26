@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useApp } from "@/store/app-store";
 
-const presets = [3, 5, 10];
+const presets = [1, 2, 5, 10];
 
 const LandingHero = () => {
   const { mode, setMode, timerDurationSec, setTimerDurationSec } = useApp();
