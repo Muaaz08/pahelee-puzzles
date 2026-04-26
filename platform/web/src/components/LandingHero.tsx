@@ -18,7 +18,7 @@ const LandingHero = () => {
         <div className="flex flex-col items-center justify-between gap-6 rounded-lg bg-surface/60 p-6 min-h-0">
           <div className="flex items-center justify-center flex-none">
             <img
-              src="/images/PaheliChess-Logo.png"
+              src="./assets/PaheliChess-Logo.png"
               alt="PaheliChess"
               className="w-44 h-44 object-contain"
             />

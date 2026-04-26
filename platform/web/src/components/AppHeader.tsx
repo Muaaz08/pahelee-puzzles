@@ -20,7 +20,7 @@ export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
           style={{ fontFamily: "'Space Grotesk', Inter, sans-serif" }}
         >
           <img
-            src="/images/PaheliChess-Logo.png"
+            src="./assets/PaheliChess-Logo.png"
             alt="PaheliChess"
             className="w-20 h-20 object-contain"
             height="50px"
