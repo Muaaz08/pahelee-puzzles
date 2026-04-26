@@ -25,19 +25,18 @@ const LandingHero = () => {
           </div>
 
           <div className="w-full flex-1 min-h-0">
-            <span className="text-sm font-medium">Mode</span>
             <div className="mt-2 flex w-full gap-2 rounded-full bg-muted p-1">
               <button
                 aria-pressed={mode === "infinite"}
                 onClick={() => setMode("infinite")}
-                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "infinite" ? "bg-lime-500 text-black" : "bg-transparent text-foreground/70"}`}
+                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "infinite" ? "bg-primary text-black" : "bg-transparent text-foreground/70"}`}
               >
                 Infinite
               </button>
               <button
                 aria-pressed={mode === "timer"}
                 onClick={() => setMode("timer")}
-                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "timer" ? "bg-lime-500 text-black" : "bg-transparent text-foreground/70"}`}
+                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "timer" ? "bg-primary text-black" : "bg-transparent text-foreground/70"}`}
               >
                 Timer
               </button>
@@ -49,7 +48,7 @@ const LandingHero = () => {
                   <button
                     key={p}
                     onClick={() => setTimerDurationSec(p * 60)}
-                    className={`flex-1 rounded-md px-3 py-2 text-sm ${timerDurationSec === p * 60 ? "bg-lime-500 text-black font-semibold" : "bg-surface text-foreground/80"}`}
+                    className={`flex-1 rounded-md px-3 py-2 text-sm ${timerDurationSec === p * 60 ? "bg-primary text-black font-semibold" : "bg-surface text-foreground/80"}`}
                   >
                     {p}m
                   </button>
@@ -72,7 +71,7 @@ const LandingHero = () => {
           <div className="w-full max-w-xs">
             <button
               onClick={handlePlay}
-              className="w-full rounded-lg bg-lime-500 px-6 py-3 text-sm font-semibold text-black shadow-md hover:scale-[1.02] transition-transform"
+              className="w-full rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-black shadow-md hover:scale-[1.02] transition-transform"
               aria-label="Play now"
             >
               Play Now
