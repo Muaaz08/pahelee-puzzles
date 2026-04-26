@@ -1,0 +1,82 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const presets = [3, 5, 10];
+
+const LandingHero = () => {
+  const [mode, setMode] = useState<"infinite" | "timer">("infinite");
+  const [time, setTime] = useState<number>(5);
+  const navigate = useNavigate();
+
+  const handlePlay = () => {
+    if (mode === "infinite") navigate(`/arena?mode=infinite`);
+    else navigate(`/arena?mode=timer&time=${time}`);
+  };
+
+  return (
+    <section className="w-full h-full">
+      <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-[35%_65%]">
+        {/* Left column: logo (35%) and mode */}
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6">
+          <div className="flex h-1/2 w-full items-center justify-center">
+            <img src="/images/PaheliChess-Logo.png" alt="PaheliChess" className="w-40 h-40 object-contain" />
+          </div>
+
+          <div className="w-full">
+            <span className="text-sm font-medium">Mode</span>
+            <div className="mt-2 flex w-full gap-2 rounded-full bg-muted p-1">
+              <button
+                aria-pressed={mode === "infinite"}
+                onClick={() => setMode("infinite")}
+                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "infinite" ? "bg-lime-500 text-black" : "bg-transparent text-foreground/70"}`}
+              >
+                Infinite
+              </button>
+              <button
+                aria-pressed={mode === "timer"}
+                onClick={() => setMode("timer")}
+                className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${mode === "timer" ? "bg-lime-500 text-black" : "bg-transparent text-foreground/70"}`}
+              >
+                Timer
+              </button>
+            </div>
+
+            {mode === "timer" && (
+              <div className="mt-3 flex w-full gap-2">
+                {presets.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setTime(p)}
+                    className={`flex-1 rounded-md px-3 py-2 text-sm ${time === p ? "bg-lime-500 text-black font-semibold" : "bg-surface text-foreground/80"}`}
+                  >
+                    {p}m
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right column: headline & CTA (65%) */}
+        <div className="flex flex-col items-center justify-center gap-6 rounded-lg bg-surface/60 p-6">
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold">PaheliChess — Puzzle Practice</h1>
+            <p className="mt-2 max-w-prose text-sm text-muted-foreground">Fast, focused puzzle solving. Choose Infinite for uninterrupted practice or Timer to train under pressure.</p>
+          </div>
+
+          <div className="w-full max-w-xs">
+            <button
+              onClick={handlePlay}
+              className="w-full rounded-lg bg-lime-500 px-6 py-3 text-sm font-semibold text-black shadow-md hover:scale-[1.02] transition-transform"
+              aria-label="Play now"
+            >
+              Play Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default LandingHero;
