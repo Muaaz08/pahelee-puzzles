@@ -18,17 +18,21 @@ type Props = {
 const dragBackendOptions = {
   enableMouseEvents: true,
   enableTouchEvents: true,
-  touchSlop: 0,
 };
 
 export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequested }: Props) {
   const [position, setPosition] = useState(puzzle.fen);
   const [status, setStatus] = useState<Status>("idle");
   const [selected, setSelected] = useState<Square | null>(null);
+  const [activeSquare, setActiveSquare] = useState<Square | null>(null);
   const [hintSquare, setHintSquare] = useState<Square | null>(null);
   const [solutionIndex, setSolutionIndex] = useState(0);
   const replyTimer = useRef<number | null>(null);
   const { playMove, playIllegal, playVictory, playIncorrect } = useChessSounds();
+
+  const legalMoves = activeSquare
+    ? new Chess(position).moves({ square: activeSquare, verbose: true })
+    : [];
 
   // Reset whenever puzzle changes
   useEffect(() => {
@@ -36,6 +40,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     setPosition(puzzle.fen);
     setStatus("idle");
     setSelected(null);
+    setActiveSquare(null);
     setHintSquare(null);
     setSolutionIndex(0);
   }, [puzzle.id, puzzle.fen]);
@@ -89,6 +94,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
       const nextIndex = solutionIndex + 1;
       setPosition(trial.fen());
       setSelected(null);
+      setActiveSquare(null);
       setHintSquare(null);
       if (nextIndex >= puzzle.solution.length) {
         setStatus("solved");
@@ -128,6 +134,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     playIncorrect();
     setPosition(trial.fen());
     setSelected(null);
+    setActiveSquare(null);
     onWrong();
     window.setTimeout(() => {
       setPosition(position);
@@ -143,9 +150,12 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     if (selected) {
       if (sq === selected) {
         setSelected(null);
+        setActiveSquare(null);
         return;
       }
-      tryMove(selected, sq);
+      const moved = tryMove(selected, sq);
+      setSelected(null);
+      setActiveSquare(null);
       return;
     }
     // Only select if there's a piece of the side to move
@@ -153,6 +163,7 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     const piece = trial.get(sq);
     if (piece && piece.color === trial.turn()) {
       setSelected(sq);
+      setActiveSquare(sq);
     }
   };
 
@@ -162,12 +173,17 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
   };
 
   const squareStyles: Record<string, React.CSSProperties> = {};
+
+  // Only show legal moves when idle
+  const showLegalMoves = status === "idle" && legalMoves.length > 0;
+
   if (selected) {
     squareStyles[selected] = {
       boxShadow: "inset 0 0 0 4px hsl(var(--primary))",
       background: "hsl(var(--primary) / 0.18)",
     };
   }
+
   if (hintSquare) {
     squareStyles[hintSquare] = {
       boxShadow: "inset 0 0 0 4px hsl(var(--primary))",
@@ -175,11 +191,39 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
     };
   }
 
-  const boardClass =
-    status === "wrong" ? "animate-shake" : status === "solved" ? "animate-pulse-glow" : "";
+  if (showLegalMoves) {
+    legalMoves.forEach((move) => {
+      const sq = move.to as Square;
+      if (move.captured) {
+        squareStyles[sq] = {
+          background: "hsl(0 0% 50% / 0.35)",
+        };
+      } else {
+        squareStyles[sq] = {
+          background: "radial-gradient(circle, hsl(0 0% 50% / 0.5) 30%, transparent 30%)",
+        };
+      }
+    });
+  }
+
+  const handlePieceDragBegin = (square: Square) => {
+    console.log("[PuzzleBoard] dragBegin:", square);
+    if (status !== "idle") return;
+    setActiveSquare(square);
+  };
+
+  const handlePieceDragEnd = () => {
+    console.log("[PuzzleBoard] dragEnd");
+    setActiveSquare(null);
+  };
+
+  const boardClass = status === "solved" ? "animate-pulse-glow" : "";
 
   return (
-    <div className={`chess-drag-surface w-full ${boardClass} rounded-2xl overflow-hidden`}>
+    <div
+      className={`chess-drag-surface w-full ${boardClass} rounded-2xl overflow-hidden`}
+      style={{ touchAction: "none" }}
+    >
       <Chessboard
         id={`puzzle-${puzzle.id}`}
         position={position}
@@ -187,7 +231,6 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
         animationDuration={220}
         customDndBackend={TouchBackend}
         customDndBackendOptions={dragBackendOptions}
-        snapToCursor
         allowDragOutsideBoard
         arePiecesDraggable={status !== "solved" && status !== "replying"}
         showBoardNotation={false}
@@ -200,6 +243,8 @@ export function PuzzleBoard({ puzzle, onSolved, onWrong, onAttempt, hintRequeste
         }}
         onPieceDrop={handlePieceDrop}
         onSquareClick={handleSquareClick}
+        onPieceDragBegin={handlePieceDragBegin}
+        onPieceDragEnd={handlePieceDragEnd}
       />
     </div>
   );
