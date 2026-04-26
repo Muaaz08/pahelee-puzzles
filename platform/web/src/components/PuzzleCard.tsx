@@ -70,7 +70,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
 
   return (
     <section
-      className="relative h-full w-full snap-start-always flex flex-col overflow-hidden"
+      className="relative h-full w-full snap-start-always flex flex-col md:flex overflow-hidden"
       style={
         {
           "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 120px))",
@@ -79,7 +79,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
     >
       <div className="flex-1 flex flex-col gap-1 px-4 pt-1 sm:gap-2 sm:pt-3 min-h-0">
         {/* Top group: meta + title */}
-        <div className="shrink-0 space-y-0.5 sm:space-y-1.5">
+        <div className="shrink-0 space-y-0.5 sm:space-y-1.5 md:w-[30%] md:mx-auto">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
               #{puzzle.id}
@@ -111,7 +111,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
         </div>
 
         {/* Middle: board — grows to fill available space */}
-        <div className="flex-1 flex items-center justify-center min-h-0 py-0.5 sm:py-1">
+        <div className="flex-1 flex items-center justify-center min-h-0 py-0.5 sm:py-1 md:flex-1">
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -134,7 +134,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
         </div>
 
         {/* Bottom group: status + mode-timer */}
-        <div className="shrink-0">
+        <div className="shrink-0 md:hidden">
           <div className="min-h-4 sm:min-h-5 flex flex-col items-center justify-center">
             <AnimatePresence mode="wait">
               {solved && (
@@ -173,12 +173,12 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
         </div>
       </div>
 
-      {showSwipeHint && (
+      {showSwipeHint && !solved && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="shrink-0 flex flex-col items-center text-muted-foreground text-[9px] sm:text-[11px] pointer-events-none"
+          className="shrink-0 flex flex-col items-center text-muted-foreground text-[9px] sm:text-[11px] pointer-events-none md:hidden"
         >
           <span>Swipe up for next puzzle</span>
           <ChevronUp className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-bounce text-primary" />
@@ -188,6 +188,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
       <ActionBar
         puzzle={puzzle}
         hintsUsed={hintsUsed}
+        className="md:ml-auto md:mr-4 md:self-center"
         onHint={() => {
           setHintsUsed((n) => n + 1);
           setHintRequested((n) => n + 1);

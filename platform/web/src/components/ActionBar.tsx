@@ -6,9 +6,11 @@ type Props = {
   puzzle: Puzzle;
   onHint: () => void;
   hintsUsed: number;
+  vertical?: boolean;
+  className?: string;
 };
 
-export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
+export function ActionBar({ puzzle, onHint, hintsUsed, vertical, className }: Props) {
   const { liked, saved, toggleLike, toggleSave, streak } = useApp();
   const isLiked = liked.has(puzzle.id);
   const isSaved = saved.has(puzzle.id);
@@ -23,8 +25,10 @@ export function ActionBar({ puzzle, onHint, hintsUsed }: Props) {
   };
 
   return (
-    <div className="shrink-0 px-4 pt-1 sm:pt-2 pb-[max(env(safe-area-inset-bottom),6px)] sm:pb-[max(env(safe-area-inset-bottom),14px)]">
-      <div className="grid grid-cols-5 items-end justify-items-center gap-1 max-w-md mx-auto">
+    <div
+      className={`shrink-0 px-4 pt-1 sm:pt-2 pb-[max(env(safe-area-inset-bottom),6px)] sm:pb-[max(env(safe-area-inset-bottom),14px)] md:relative md:p-0 ${className ?? ""}`}
+    >
+      <div className="grid grid-cols-5 items-end justify-items-center gap-1 max-w-md mx-auto md:flex md:flex-col md:gap-3 md:items-center md:justify-center">
         <ActionButton
           icon={<Heart className={`h-6 w-6 ${isLiked ? "fill-primary text-primary" : "text-primary"}`} strokeWidth={1.8} />}
           label="128"
