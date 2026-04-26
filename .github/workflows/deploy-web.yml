@@ -34,12 +34,12 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: npm run build --workspace @pahelee/platform/web -- --base="/${GITHUB_REPOSITORY#*/}/"
+        run: npm run build --workspace @pahelee/web -- --base="/${GITHUB_REPOSITORY#*/}/"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: apps/web/dist
+          path: platform/web/dist
 
   deploy:
     name: Deploy to GitHub Pages
