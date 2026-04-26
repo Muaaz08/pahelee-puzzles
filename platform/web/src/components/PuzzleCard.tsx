@@ -20,24 +20,8 @@ const diffColor: Record<Puzzle["difficulty"], string> = {
   Hard: "text-red-400",
 };
 
-export function PuzzleCard({
-  puzzle,
-  isActive,
-  onAdvance,
-  showSwipeHint,
-}: Props) {
-  const {
-    registerSolve,
-    registerWrong,
-    registerAttempt,
-    startPuzzleTimer,
-    stopPuzzleTimer,
-    mode,
-    timerRemainingSec,
-    timerActive,
-    timerSolved,
-    puzzleTimeSec,
-  } = useApp();
+export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props) {
+  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode, timerRemainingSec, timerActive, timerSolved, puzzleTimeSec } = useApp();
   const [solved, setSolved] = useState(false);
   const [feedback, setFeedback] = useState<"" | "wrong">("");
   const [hintRequested, setHintRequested] = useState(0);
@@ -60,12 +44,11 @@ export function PuzzleCard({
     return `${mm}:${ss}`;
   };
 
-  const modeTimerLabel =
-    mode === "timer"
-      ? timerActive
-        ? formatTime(timerRemainingSec)
-        : `${timerSolved}✓`
-      : formatTime(puzzleTimeSec);
+  const modeTimerLabel = mode === "timer"
+    ? timerActive
+      ? formatTime(timerRemainingSec)
+      : `${timerSolved}✓`
+    : formatTime(puzzleTimeSec);
 
   if (!isActive && solved) {
     // no-op; reset happens via key remount
@@ -90,14 +73,29 @@ export function PuzzleCard({
       className="relative h-full w-full snap-start-always flex flex-col md:flex overflow-hidden"
       style={
         {
-          "--board-max":
-            "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 120px))",
+          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 120px))",
         } as CSSProperties
       }
     >
       <div className="flex-1 flex flex-col gap-1 px-4 pt-1 sm:gap-2 sm:pt-3 min-h-0">
         {/* Top group: meta + title */}
         <div className="shrink-0 space-y-0.5 sm:space-y-1.5 md:w-[30%] md:mx-auto">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-muted-foreground border border-border rounded-full px-2.5 py-0.5">
+              #{puzzle.id}
+            </span>
+            <span className={`text-xs font-extrabold tracking-wider ${diffColor[puzzle.difficulty]}`}>
+              {puzzle.difficulty.toUpperCase()}
+            </span>
+            <button
+              onClick={() => window.open(`https://lichess.org/training/${puzzle.id}`, "_blank")}
+              className="h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+              aria-label="Open on Lichess"
+            >
+              <ExternalLink className="h-5 w-5" />
+            </button>
+          </div>
+
           <div className="text-center">
             <h2
               className="text-[clamp(1.2rem,5.2vw,2rem)] font-extrabold leading-tight"
@@ -164,13 +162,13 @@ export function PuzzleCard({
             </AnimatePresence>
           </div>
           <div className="flex items-center justify-center gap-2 py-1 text-xs sm:text-sm font-semibold">
-            <span
-              className={`${mode === "timer" ? "text-primary" : "text-foreground/70"}`}
-            >
+            <span className={`${mode === "timer" ? "text-primary" : "text-foreground/70"}`}>
               {mode === "timer" ? "TIMER" : "INFINITE"}
             </span>
             <span className="text-muted-foreground">|</span>
-            <span className="font-mono tabular-nums">{modeTimerLabel}</span>
+            <span className="font-mono tabular-nums">
+              {modeTimerLabel}
+            </span>
           </div>
         </div>
       </div>
