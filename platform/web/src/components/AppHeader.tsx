@@ -1,12 +1,22 @@
-import { Crown, Settings, Timer, Infinity as InfinityIcon } from "lucide-react";
+import { Crown, Settings, Timer } from "lucide-react";
 import { useApp } from "@/store/app-store";
 
 export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
-  const { mode, setMode, streak, timerRemainingSec, timerActive, timerSolved } = useApp();
+  const { mode, streak, timerRemainingSec, timerActive, timerSolved, puzzleTimeSec, puzzleTimerActive } = useApp();
 
-  const mm = String(Math.floor(timerRemainingSec / 60)).padStart(2, "0");
-  const ss = String(timerRemainingSec % 60).padStart(2, "0");
-  const timerLabel = timerActive ? `${mm}:${ss}` : `${timerSolved}✓`;
+  const formatTime = (sec: number) => {
+    const mm = String(Math.floor(sec / 60)).padStart(2, "0");
+    const ss = String(sec % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  };
+
+  const timerLabel = mode === "timer"
+    ? (timerActive ? formatTime(timerRemainingSec) : `${timerSolved}✓`)
+    : (puzzleTimerActive || puzzleTimeSec > 0 ? formatTime(puzzleTimeSec) : "--:--");
+
+  const timerSubtitle = mode === "timer"
+    ? (timerActive ? "Time remaining" : "Timer stopped")
+    : `Streak: ${streak}`;
 
   return (
     <header className="relative z-30 shrink-0 px-4 pt-[max(env(safe-area-inset-top),8px)] pb-1.5 sm:pt-[max(env(safe-area-inset-top),12px)] sm:pb-3">
@@ -30,55 +40,26 @@ export function AppHeader({ onOpenSettings }: { onOpenSettings: () => void }) {
         </button>
       </div>
 
-      <div className="mt-2 sm:mt-3 grid grid-cols-2 gap-2 pointer-events-auto">
-        <ModePill
-          active={mode === "timer"}
-          onClick={() => setMode("timer")}
-          icon={<Timer className="h-4 w-4" />}
-          title="TIMER MODE"
-          subtitle={timerLabel}
-        />
-        <ModePill
-          active={mode === "infinite"}
-          onClick={() => setMode("infinite")}
-          icon={<InfinityIcon className="h-4 w-4" />}
-          title="INFINITE MOVE"
-          subtitle={`Streak: ${streak}`}
-        />
+      <div className="mt-2 sm:mt-3 flex justify-center pointer-events-auto">
+        <div
+          className={`min-h-10 sm:min-h-12 rounded-full px-4 sm:px-5 py-1.5 sm:py-2 border transition-all flex flex-col items-center justify-center gap-0.5 ${
+            mode === "timer"
+              ? "bg-primary text-primary-foreground border-primary glow-soft"
+              : "bg-card text-foreground/85 border-border"
+          }`}
+        >
+          <span className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-bold tracking-wider">
+            <Timer className="h-4 w-4" />
+            {mode === "timer" ? "TIMER MODE" : "INFINITE MODE"}
+          </span>
+          <span className="text-[16px] sm:text-lg font-extrabold font-mono tabular-nums">
+            {timerLabel}
+          </span>
+          <span className="text-[10px] sm:text-xs font-medium opacity-75">
+            {timerSubtitle}
+          </span>
+        </div>
       </div>
     </header>
-  );
-}
-
-function ModePill({
-  active,
-  onClick,
-  icon,
-  title,
-  subtitle,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`min-h-10 sm:min-h-12 rounded-full px-2.5 sm:px-3 py-1.5 sm:py-2 border transition-all flex flex-col items-center justify-center gap-0.5 ${
-        active
-          ? "bg-primary text-primary-foreground border-primary glow-soft"
-          : "bg-card text-foreground/85 border-border"
-      }`}
-    >
-      <span className="flex items-center gap-1 text-[10px] sm:gap-1.5 sm:text-[11px] font-bold tracking-wider">
-        {icon}
-        {title}
-      </span>
-      <span className={`text-[11px] sm:text-xs font-semibold ${active ? "opacity-90" : "text-muted-foreground"}`}>
-        {subtitle}
-      </span>
-    </button>
   );
 }

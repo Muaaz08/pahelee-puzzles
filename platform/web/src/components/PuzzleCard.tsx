@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp, MoreHorizontal } from "lucide-react";
@@ -21,11 +21,22 @@ const diffColor: Record<Puzzle["difficulty"], string> = {
 };
 
 export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props) {
-  const { registerSolve, registerWrong, registerAttempt } = useApp();
+  const { registerSolve, registerWrong, registerAttempt, startPuzzleTimer, stopPuzzleTimer, mode } = useApp();
   const [solved, setSolved] = useState(false);
   const [feedback, setFeedback] = useState<"" | "wrong">("");
   const [hintRequested, setHintRequested] = useState(0);
   const [hintsUsed, setHintsUsed] = useState(0);
+
+  useEffect(() => {
+    if (mode === "infinite" && isActive) {
+      startPuzzleTimer();
+    }
+    return () => {
+      if (mode === "infinite") {
+        stopPuzzleTimer();
+      }
+    };
+  }, [isActive, mode, startPuzzleTimer, stopPuzzleTimer]);
 
   if (!isActive && solved) {
     // no-op; reset happens via key remount
@@ -50,7 +61,7 @@ export function PuzzleCard({ puzzle, isActive, onAdvance, showSwipeHint }: Props
       className="relative h-full w-full snap-start-always flex flex-col overflow-hidden"
       style={
         {
-          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 330px))",
+          "--board-max": "min(calc(100vw - 32px), 28rem, calc(var(--app-height, 100svh) - 200px))",
         } as CSSProperties
       }
     >

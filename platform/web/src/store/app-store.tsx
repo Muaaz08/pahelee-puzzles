@@ -37,6 +37,13 @@ type Ctx = {
   startTimer: () => void;
   stopTimer: () => void;
   timerSolved: number;
+
+  // infinite mode per-puzzle timer
+  puzzleTimeSec: number;
+  startPuzzleTimer: () => void;
+  stopPuzzleTimer: () => void;
+  resetPuzzleTimer: () => void;
+  puzzleTimerActive: boolean;
 };
 
 const AppContext = createContext<Ctx | null>(null);
@@ -52,6 +59,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [timerRemainingSec, setTimerRemainingSec] = useState(() => loadState().timerDurationSec);
   const [timerActive, setTimerActive] = useState(false);
   const [timerSolved, setTimerSolved] = useState(0);
+  const [puzzleTimeSec, setPuzzleTimeSec] = useState(0);
+  const [puzzleTimerActive, setPuzzleTimerActive] = useState(false);
 
   const setMode = useCallback((m: Mode) => {
     setModeInternal(m);
@@ -77,6 +86,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return () => window.clearTimeout(t);
   }, [timerActive, timerRemainingSec]);
 
+  // Infinite mode per-puzzle timer tick
+  useEffect(() => {
+    if (mode !== "infinite" || !puzzleTimerActive) return;
+    const t = window.setTimeout(() => setPuzzleTimeSec((s) => s + 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [mode, puzzleTimerActive, puzzleTimeSec]);
+
   const startTimer = useCallback(() => {
     setTimerRemainingSec(timerDurationSec);
     setTimerSolved(0);
@@ -87,6 +103,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTimerActive(false);
   }, []);
 
+  const startPuzzleTimer = useCallback(() => {
+    setPuzzleTimeSec(0);
+    setPuzzleTimerActive(true);
+  }, []);
+
+  const stopPuzzleTimer = useCallback(() => {
+    setPuzzleTimerActive(false);
+  }, []);
+
+  const resetPuzzleTimer = useCallback(() => {
+    setPuzzleTimeSec(0);
+    setPuzzleTimerActive(false);
+  }, []);
+
   const registerSolve = useCallback((_puzzleId: number | string) => {
     setPersisted((p) => ({
       ...p,
@@ -95,7 +125,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
     setStreak((s) => s + 1);
     if (mode === "timer" && timerActive) setTimerSolved((n) => n + 1);
-  }, [mode, streak, timerActive]);
+    if (mode === "infinite") startPuzzleTimer();
+  }, [mode, streak, timerActive, startPuzzleTimer]);
 
   const registerWrong = useCallback(() => {
     setStreak(0);
@@ -145,7 +176,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toggleLike, toggleSave, resetStreak,
     timerDurationSec, setTimerDurationSec,
     timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved,
-  }), [persisted, mode, setMode, puzzleTheme, puzzleDifficulty, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, setTimerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved]);
+    puzzleTimeSec, startPuzzleTimer, stopPuzzleTimer, resetPuzzleTimer, puzzleTimerActive,
+  }), [persisted, mode, setMode, puzzleTheme, puzzleDifficulty, streak, registerSolve, registerWrong, registerAttempt, toggleLike, toggleSave, resetStreak, timerDurationSec, setTimerDurationSec, timerRemainingSec, timerActive, startTimer, stopTimer, timerSolved, puzzleTimeSec, startPuzzleTimer, stopPuzzleTimer, resetPuzzleTimer, puzzleTimerActive]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
