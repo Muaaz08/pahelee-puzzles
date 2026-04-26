@@ -52,7 +52,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [persisted, setPersisted] = useState<AppPersisted>(() => loadState());
   const [mode, setModeInternal] = useState<Mode>(() => loadState().mode);
   const [puzzleTheme, setPuzzleTheme] = useState<LichessPuzzleTheme>("mix");
-  const [puzzleDifficulty, setPuzzleDifficulty] = useState<LichessPuzzleDifficulty>("normal");
+  const [puzzleDifficulty, setPuzzleDifficulty] = useState<LichessPuzzleDifficulty>("easiest");
   const [streak, setStreak] = useState(0);
 
   const [timerDurationSec, setTimerDurationSecInternal] = useState(() => loadState().timerDurationSec);

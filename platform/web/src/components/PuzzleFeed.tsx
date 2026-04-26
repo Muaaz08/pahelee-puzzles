@@ -13,8 +13,14 @@ export function PuzzleFeed() {
   const query = useInfiniteQuery({
     queryKey: ["lichess-puzzles", puzzleTheme, puzzleDifficulty],
     initialPageParam: 0,
-    queryFn: () => fetchLichessPuzzles({ theme: puzzleTheme, difficulty: puzzleDifficulty, count: 15 }),
-    getNextPageParam: (lastPage, pages) => (lastPage.length > 0 ? pages.length : undefined),
+    queryFn: () =>
+      fetchLichessPuzzles({
+        theme: puzzleTheme,
+        difficulty: puzzleDifficulty,
+        count: 15,
+      }),
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length > 0 ? pages.length : undefined,
     staleTime: 1000 * 60 * 5,
   });
 
@@ -73,7 +79,7 @@ export function PuzzleFeed() {
   if (query.isPending) {
     return (
       <FeedState
-        title="Loading Lichess puzzles"
+        title="Loading puzzles"
         body="Finding fresh tactics for this theme..."
       />
     );
@@ -114,7 +120,15 @@ export function PuzzleFeed() {
   );
 }
 
-function FeedState({ title, body, action }: { title: string; body: string; action?: React.ReactNode }) {
+function FeedState({
+  title,
+  body,
+  action,
+}: {
+  title: string;
+  body: string;
+  action?: React.ReactNode;
+}) {
   return (
     <div className="min-h-0 flex-1 w-full flex items-center justify-center px-6">
       <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 text-center shadow-lg">
